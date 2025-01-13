@@ -43,7 +43,7 @@ const Registration = () => {
 
   const handleNext = () => {
     createUserWithEmailAndPassword(auth, emailInput, passwordInput)
-      .then((user) => {       
+      .then((user) => {
         updateProfile(auth.currentUser, {
           displayName: nameInput,
           photoURL: avatar,
@@ -62,7 +62,7 @@ const Registration = () => {
             set(ref(db, "users/" + user.user.uid), {
               username: user.user.displayName,
               email: user.user.email,
-              id: user.user.uid
+              id: user.user.uid,
             });
           });
       })

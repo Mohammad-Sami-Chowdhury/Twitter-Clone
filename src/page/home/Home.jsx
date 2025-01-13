@@ -3,13 +3,13 @@ import { getDatabase, ref, push, set, onValue } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Rightbar from "../../components/rightbar/Rightbar";
 import profilesm from "../../assets/profilesm.png";
 import { CiImageOn, CiTimer } from "react-icons/ci";
 import { MdOutlineGifBox, MdOutlineEmojiEmotions } from "react-icons/md";
 import { FaChartBar } from "react-icons/fa6";
+import { ToastContainer, toast } from "react-toastify";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -19,6 +19,8 @@ const Home = () => {
   const [postText, setPostText] = useState(""); // Text input for the post
   const [posts, setPosts] = useState([]); // Store posts data
   const [currentUser, setCurrentUser] = useState(null); // Logged-in user data
+  console.log(currentUser);
+  
   const data = useSelector((state) => state.userDetails.userInfo);
 
   // Check for logged-in user and authentication status
@@ -60,12 +62,7 @@ const Home = () => {
     })
       .then(() => {
         setPostText(""); // Clear the input field after posting
-        toast.success("Post added successfully!");
       })
-      .catch((error) => {
-        toast.error("Failed to add post!");
-        console.error("Error adding post: ", error);
-      });
   };
 
   // Fetch posts of followed users
@@ -98,7 +95,6 @@ const Home = () => {
 
   return (
     <section className="bg-[#1B2730] h-screen font-pops">
-      <ToastContainer />
       {verify ? (
         <div className="flex">
           <Sidebar />

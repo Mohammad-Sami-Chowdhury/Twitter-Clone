@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast, Bounce } from "react-toastify";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { userLoginInfo } from "../../slices/userSlice";
@@ -23,7 +22,6 @@ const Login = () => {
     signInWithEmailAndPassword(auth, emailInput, passwordInput).then((user) => {
       dispatch(userLoginInfo(user.user));
       localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
-      toast.success("Login Successfull");
       setTimeout(() => {
         navigate("/home");
       }, 2000);
@@ -31,19 +29,6 @@ const Login = () => {
   };
   return (
     <div className="bg-[#1B2730] h-screen py-10">
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick={true}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        transition={Bounce}
-      />
       <img className="w-[100px] mx-auto" src={logo} alt="logo" />
       <h1 className="font-pops font-bold text-[42px] text-white text-center my-9 ">
         Log in to Twitter

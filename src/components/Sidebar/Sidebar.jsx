@@ -56,16 +56,17 @@ const Sidebar = () => {
       <button className="bg-[#1D9BF0] duration-300 hover:bg-[#1d9cf0a4] text-white w-[230px] h-[55px] rounded-full text-[18px] font-bold font-pops mt-[50px]">
         Tweet
       </button>
-      <div className="flex items-center gap-x-3 mt-[100px] cursor-pointer">
-        <img className="w-[50px]" src={avatar} alt="profile" />
-        <div>
-          <p className="font-pops text-base text-white font-semibold">
-            {data.displayName}
-          </p>
-          <p className="font-pops text-[10px] text-gray-500">{data.email}</p>
+      <Link to="/profile">
+        <div className="flex items-center gap-x-3 mt-[100px] cursor-pointer">
+          <img className="w-[50px]" src={avatar} alt="profile" />
+          <div>
+            <p className="font-pops text-base text-white font-semibold">
+              {data.displayName}
+            </p>
+            <p className="font-pops text-[10px] text-gray-500">{data.email}</p>
+          </div>
         </div>
-        <PiDotsThreeOutline size={22} className="text-white ml-[50px]" />
-      </div>
+      </Link>
     </div>
   );
 };
