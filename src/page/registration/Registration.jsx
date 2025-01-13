@@ -14,7 +14,7 @@ import {
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 import { useNavigate } from "react-router-dom";
-import avatar from "../../assets/avatar.png"
+import avatar from "../../assets/avatar.png";
 
 const Registration = () => {
   const auth = getAuth();
@@ -43,7 +43,7 @@ const Registration = () => {
 
   const handleNext = () => {
     createUserWithEmailAndPassword(auth, emailInput, passwordInput)
-      .then((user) => {
+      .then((user) => {       
         updateProfile(auth.currentUser, {
           displayName: nameInput,
           photoURL: avatar,
@@ -62,6 +62,7 @@ const Registration = () => {
             set(ref(db, "users/" + user.user.uid), {
               username: user.user.displayName,
               email: user.user.email,
+              id: user.user.uid
             });
           });
       })

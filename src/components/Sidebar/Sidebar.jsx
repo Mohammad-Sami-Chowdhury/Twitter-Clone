@@ -8,8 +8,10 @@ import { IoMailOutline, IoHomeOutline } from "react-icons/io5";
 import { CiBookmark } from "react-icons/ci";
 import { LuNotebookText } from "react-icons/lu";
 import { PiDotsThreeCircle, PiDotsThreeOutline } from "react-icons/pi";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
+  const data = useSelector((state) => state.userDetails.userInfo);
   return (
     <div className="bg-[#1B2730] h-screen w-[25%] pl-[155px] pr-[15px] pt-[31px] border-r-[1px] border-gray-500">
       <img className="w-[40px]" src={logo} alt="logo" />
@@ -58,9 +60,9 @@ const Sidebar = () => {
         <img className="w-[50px]" src={avatar} alt="profile" />
         <div>
           <p className="font-pops text-base text-white font-semibold">
-            User Name
+            {data.displayName}
           </p>
-          <p className="font-pops text-base text-gray-500">@username</p>
+          <p className="font-pops text-[10px] text-gray-500">{data.email}</p>
         </div>
         <PiDotsThreeOutline size={22} className="text-white ml-[50px]" />
       </div>
