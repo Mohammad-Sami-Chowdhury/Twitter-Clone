@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "../../assets/logo.png";
 import avatar from "../../assets/avatar.png";
+import { Link } from "react-router-dom";
 import { FaHashtag, FaUser } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoMailOutline, IoHomeOutline } from "react-icons/io5";
@@ -10,12 +11,14 @@ import { PiDotsThreeCircle, PiDotsThreeOutline } from "react-icons/pi";
 
 const Sidebar = () => {
   return (
-    <div className="bg-[#1B2730] h-screen w-[25%] pl-[155px] pr-[15px] pt-[31px]">
-      <img className="w-[40px]" src={logo} alt="" />
+    <div className="bg-[#1B2730] h-screen w-[25%] pl-[155px] pr-[15px] pt-[31px] border-r-[1px] border-gray-500">
+      <img className="w-[40px]" src={logo} alt="logo" />
       <div className="mt-[50px] space-y-10">
-        <div className="flex text-white items-center gap-x-5 cursor-pointer">
-          <IoHomeOutline size={28} />
-          <p className="text-[18px] font-pops font-semibold">Home</p>
+        <div className="flex text-white items-center gap-x-5">
+          <Link className="flex items-center gap-x-5" to="/home">
+            <IoHomeOutline size={28} />
+            <p className="text-[18px] font-pops font-semibold">Home</p>
+          </Link>
         </div>
         <div className="flex text-white items-center gap-x-5 cursor-pointer">
           <FaHashtag size={28} />
@@ -37,9 +40,11 @@ const Sidebar = () => {
           <LuNotebookText size={28} />
           <p className="text-[18px] font-pops font-semibold">Lists</p>
         </div>
-        <div className="flex text-white items-center gap-x-5 cursor-pointer">
-          <FaUser size={28} />
-          <p className="text-[18px] font-pops font-semibold">Profile</p>
+        <div className="flex text-white items-center gap-x-5">
+          <Link className="flex items-center gap-x-5" to="/profile">
+            <FaUser size={28} />
+            <p className="text-[18px] font-pops font-semibold">Profile</p>
+          </Link>
         </div>
         <div className="flex text-white items-center gap-x-5 cursor-pointer">
           <PiDotsThreeCircle size={28} />
@@ -52,10 +57,12 @@ const Sidebar = () => {
       <div className="flex items-center gap-x-3 mt-[100px] cursor-pointer">
         <img className="w-[50px]" src={avatar} alt="profile" />
         <div>
-          <p className="font-pops text-base text-white font-semibold">User Name</p>
+          <p className="font-pops text-base text-white font-semibold">
+            User Name
+          </p>
           <p className="font-pops text-base text-gray-500">@username</p>
         </div>
-        <PiDotsThreeOutline size={22} className="text-white ml-[50px]"/>
+        <PiDotsThreeOutline size={22} className="text-white ml-[50px]" />
       </div>
     </div>
   );

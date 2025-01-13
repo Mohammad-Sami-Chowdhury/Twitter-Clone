@@ -5,13 +5,31 @@ import google from "../../assets/google.png";
 import apple from "../../assets/apple.png";
 import { Link } from "react-router-dom";
 import { MdCancel } from "react-icons/md";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
+import { useNavigate } from "react-router-dom";
+import avatar from "../../assets/avatar.png"
 
 const Registration = () => {
+  const auth = getAuth();
+  const db = getDatabase();
+  const navigate = useNavigate();
+  const [emailInput, setEmailInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [numberInput, setNumberInput] = useState("");
   const [signup, setSignup] = useState(false);
   const [email, setEmail] = useState(false);
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const handleEmailInput = (e) => setEmailInput(e.target.value);
+  const handleNameInput = (e) => setNameInput(e.target.value);
+  const handlePasswordInput = (e) => setPasswordInput(e.target.value);
+  const handleNumberInput = (e) => setNumberInput(e.target.value);
 
   const handleSignup = () => {
     setSignup(true);
@@ -20,31 +38,56 @@ const Registration = () => {
     setEmail(!email);
   };
   const handleCancel = () => {
-    setSignup(false)
-  }
+    setSignup(false);
+  };
 
-  const days = Array.from({ length: 31 }, (_, i) => i + 1); // 1 to 31
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const years = Array.from(
-    { length: 100 },
-    (_, i) => new Date().getFullYear() - i
-  );
+  const handleNext = () => {
+    createUserWithEmailAndPassword(auth, emailInput, passwordInput)
+      .then((user) => {
+        updateProfile(auth.currentUser, {
+          displayName: nameInput,
+          photoURL: avatar,
+        });
+        sendEmailVerification(auth.currentUser)
+          .then(() => {
+            toast.success("Please Check Your Mail");
+            setEmailInput("");
+            setNameInput("");
+            setPasswordInput("");
+            setTimeout(() => {
+              navigate("/login");
+            }, 2000);
+          })
+          .then(() => {
+            set(ref(db, "users/" + user.user.uid), {
+              username: user.user.displayName,
+              email: user.user.email,
+            });
+          });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        if (errorCode.includes("auth/email-already-in-use")) {
+          toast.error("This Email is Already in Use");
+        }
+      });
+  };
 
   return (
     <section className="bg-[#1B2730] relative">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
       <div className="flex items-center font-pops">
         <div className="w-[60%]">
           <img className="h-screen" src={bg} alt="registration background" />
@@ -154,34 +197,32 @@ const Registration = () => {
       </div>
       {signup && (
         <div className="bg-[#1B2730] shadow-lg shadow-black rounded-md w-[750px] h-[800px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] p-10">
-            <MdCancel onClick={handleCancel} size={28} className="text-white cursor-pointer absolute top-[20px] right-[20px]"/>
+          <MdCancel
+            onClick={handleCancel}
+            size={28}
+            className="text-white cursor-pointer absolute top-[20px] right-[20px]"
+          />
           <img className="w-[50px] mx-auto mb-10" src={logo} alt="logo" />
           <p className="font-pops text-white text-[30px] font-bold mb-[35px]">
             Create an account
           </p>
-          <input
-            placeholder="Name"
-            className="w-[670px] h-[70px] mb-[25px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
-            type="text"
-          />
           {email ? (
             <>
               <input
-                placeholder="Email"
-                className="w-[670px] h-[70px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
+                onChange={handleNameInput}
+                placeholder="Name"
+                className="w-[670px] h-[70px] mb-[25px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
                 type="text"
               />
-              <p
-                onClick={handleEmail}
-                className="text-base text-[#1D9BF0] mt-[30px] cursor-pointer"
-              >
-                Use Phone Number
-              </p>
-            </>
-          ) : (
-            <>
               <input
+                onChange={handleNumberInput}
                 placeholder="Phone Number"
+                className="w-[670px] h-[70px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white mb-[25px]"
+                type="text"
+              />
+              <input
+                onChange={handlePasswordInput}
+                placeholder="Password"
                 className="w-[670px] h-[70px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
                 type="text"
               />
@@ -192,61 +233,43 @@ const Registration = () => {
                 Use Email
               </p>
             </>
+          ) : (
+            <>
+              <input
+                value={nameInput}
+                onChange={handleNameInput}
+                placeholder="Name"
+                className="w-[670px] h-[70px] mb-[25px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
+                type="text"
+              />
+              <input
+                value={emailInput}
+                onChange={handleEmailInput}
+                placeholder="Email"
+                className="w-[670px] h-[70px] mb-[25px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
+                type="text"
+              />
+              <input
+                value={passwordInput}
+                onChange={handlePasswordInput}
+                placeholder="Password"
+                className="w-[670px] h-[70px] px-5 rounded-md bg-transparent border-[1px] border-gray-500 outline-none text-white"
+                type="text"
+              />
+              <p
+                onClick={handleEmail}
+                className="text-base text-[#1D9BF0] mt-[30px] cursor-pointer"
+              >
+                Use Phone number
+              </p>
+            </>
           )}
-          <p className="font-pops text-[18px] text-white font-medium mt-10">
-            Date Of Birth
-          </p>
-          <p className="font-pops text-base text-gray-500 mt-[10px] mb-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat
-            assumenda culpa consequuntur accusantium, fugiat tempora cum.
-            Laboriosam facilis deserunt consequuntur vero magni voluptate error,
-            accusantium in, consectetur illum iusto enim!
-          </p>
-
-          <div className="flex justify-between">
-            {/* Month Dropdown */}
-            <select
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-              className="block w-[312px] h-[70px] bg-transparent p-2 border border-gray-500 rounded-lg text-white outline-none"
-            >
-              <option className="bg-[#1B2730] text-gray-500" value="">Month</option>
-              {months.map((m, index) => (
-                <option className="bg-[#1B2730]" key={index} value={index + 1}>
-                  {m}
-                </option>
-              ))}
-            </select>
-
-            {/* Day Dropdown */}
-            <select
-              value={day}
-              onChange={(e) => setDay(e.target.value)}
-              className="block w-[160px] h-[70px] p-2 border border-gray-500 rounded-lg text-white outline-none bg-transparent"
-            >
-              <option className="bg-[#1B2730] text-gray-500" value="">Day</option>
-              {days.map((d) => (
-                <option className="bg-[#1B2730]" key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-
-            {/* Year Dropdown */}
-            <select
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="block w-[160px] h-[70px] p-2 border border-gray-500 rounded-lg text-white outline-none bg-transparent"
-            >
-              <option className="bg-[#1B2730] text-gray-500" value="">Year</option>
-              {years.map((y) => (
-                <option className="bg-[#1B2730]" key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button className="w-full h-[60px] rounded-full bg-[#1D9BF0] text-white text-[18px] font-bold font-pops mt-5">Next</button>
+          <button
+            onClick={handleNext}
+            className="w-full h-[60px] rounded-full bg-[#1D9BF0] text-white text-[18px] font-bold font-pops mt-5"
+          >
+            Next
+          </button>
         </div>
       )}
     </section>

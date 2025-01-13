@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./App.css";
 import Profile from "./components/profile/Profile";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -9,13 +8,18 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import firebaseConfig from "./components/firebase/firebase.config";
+import Home from "./page/home/Home";
+import Login from "./page/login/Login";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<Registration />}></Route>
+      <Route path="/" element={<Home />}></Route>
+      <Route path="/home" element={<Home />}></Route>
+      <Route path="/registration" element={<Registration />}></Route>
+      <Route path="/login" element={<Login />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
-      <Route path="/sidebar" element={<Sidebar />}></Route>
     </>
   )
 );
