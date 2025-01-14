@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import firebaseConfig from "./components/firebase/firebase.config";
 import Home from "./page/home/Home";
-import Login from "./page/login/Login";
+import Login from "./page/login/login";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
