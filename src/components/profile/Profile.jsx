@@ -18,7 +18,7 @@ import {
   update,
 } from "firebase/database";
 import { useSelector, useDispatch } from "react-redux";
-import { updateDisplayName } from "../../slices/userSlice"; // Redux action
+import { updateDisplayName } from "../../slices/userSlice";
 import cover from "../../assets/cover.png";
 import profile from "../../assets/profile.png";
 import profilesm from "../../assets/profilesm.png";
@@ -38,8 +38,8 @@ const Profile = () => {
     birthday: "",
   });
 
-  const data = useSelector((state) => state.userDetails.userInfo); // Redux state
-  const dispatch = useDispatch(); // Redux dispatch
+  const data = useSelector((state) => state.userDetails.userInfo);
+  const dispatch = useDispatch();
   const db = getDatabase();
   const [menuTimestamp, setMenuTimestamp] = useState(null);
 
@@ -90,10 +90,20 @@ const Profile = () => {
       const updatedUserInfo = { ...data, ...editDetails };
       localStorage.setItem("userLoginInfo", JSON.stringify(updatedUserInfo));
 
+      // Now update the user's posts with the new name
+      const postsRef = ref(db, "posts/");
+      onValue(postsRef, (snapshot) => {
+        snapshot.forEach((post) => {
+          if (post.val().uid === data.uid) {
+            const postRef = ref(db, "posts/" + post.key);
+            update(postRef, { name: editDetails.displayName });
+          }
+        });
+      });
+
       setIsEditing(false);
     });
   };
-
   return (
     <div className="bg-[#1B2730] h-screen font-pops">
       <div className="flex">

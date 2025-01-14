@@ -63,7 +63,10 @@ const Login = () => {
         <Link to="#" className="text-[#1D9BF0] text-[18px] font-pops">
           Forgot Password?
         </Link>
-        <Link to="/registration" className="text-[#1D9BF0] text-[18px] font-pops">
+        <Link
+          to="/registration"
+          className="text-[#1D9BF0] text-[18px] font-pops"
+        >
           Sign up to Twitter
         </Link>
       </div>

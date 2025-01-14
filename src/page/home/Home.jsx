@@ -14,11 +14,11 @@ import { ToastContainer, toast } from "react-toastify";
 const Home = () => {
   const navigate = useNavigate();
   const auth = getAuth();
-  const db = getDatabase(); // Realtime Database instance
+  const db = getDatabase();
   const [verify, setVerify] = useState(false);
-  const [postText, setPostText] = useState(""); // Text input for the post
-  const [posts, setPosts] = useState([]); // Store posts data
-  const [currentUser, setCurrentUser] = useState(null); // Logged-in user data
+  const [postText, setPostText] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   console.log(currentUser);
   
   const data = useSelector((state) => state.userDetails.userInfo);
@@ -34,7 +34,7 @@ const Home = () => {
     onAuthStateChanged(auth, (user) => {
       if (user && user.emailVerified) {
         setVerify(true);
-        setCurrentUser(user); // Set logged-in user data
+        setCurrentUser(user);
         toast.success("Login Successful");
       } else {
         setVerify(false);
@@ -52,16 +52,16 @@ const Home = () => {
     }
 
     const postsRef = ref(db, "posts");
-    const newPostRef = push(postsRef); // Create a new unique key for the post
+    const newPostRef = push(postsRef);
     set(newPostRef, {
       text: postText,
       timestamp: Date.now(),
-      uid: currentUser?.uid, // Logged-in user UID
-      email: currentUser?.email, // Logged-in user email
+      uid: currentUser?.uid,
+      email: currentUser?.email,
       name: currentUser?.displayName,
     })
       .then(() => {
-        setPostText(""); // Clear the input field after posting
+        setPostText("");
       })
   };
 
@@ -73,7 +73,7 @@ const Home = () => {
     onValue(followingRef, (snapshot) => {
       const followingUsers = [];
       snapshot.forEach((childSnapshot) => {
-        followingUsers.push(childSnapshot.key); // Get the followed users
+        followingUsers.push(childSnapshot.key);
       });
 
       // Fetch posts from followed users

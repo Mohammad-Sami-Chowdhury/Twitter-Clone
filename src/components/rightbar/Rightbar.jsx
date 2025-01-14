@@ -5,12 +5,12 @@ import { useSelector } from "react-redux";
 import { getDatabase, ref, onValue, set, remove } from "firebase/database";
 
 const Rightbar = () => {
-  const data = useSelector((state) => state.userDetails.userInfo); // Logged-in user data
+  const data = useSelector((state) => state.userDetails.userInfo);
   const db = getDatabase();
   const [userList, setUserList] = useState([]);
-  const [following, setFollowing] = useState({}); // Store who the user is following
-  const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
-  const [blockedByUsers, setBlockedByUsers] = useState({}); // Store blocked users (if needed)
+  const [following, setFollowing] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [blockedByUsers, setBlockedByUsers] = useState({});
 
   // Fetch users from the database
   useEffect(() => {
@@ -32,7 +32,7 @@ const Rightbar = () => {
     onValue(followingRef, (snapshot) => {
       let followingData = {};
       snapshot.forEach((item) => {
-        followingData[item.key] = true; // Mark users as followed
+        followingData[item.key] = true;
       });
       setFollowing(followingData);
     });
@@ -56,8 +56,8 @@ const Rightbar = () => {
   // Filter users based on search query
   const filteredUsers = userList.filter(
     (user) =>
-      !blockedByUsers[user.userid] && // Exclude blocked users
-      user.username.toLowerCase().includes(searchQuery.toLowerCase()) // Filter based on search query
+      !blockedByUsers[user.userid] &&
+      user.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -69,7 +69,7 @@ const Rightbar = () => {
         />
         <input
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="w-[370px] h-[55px] bg-[#3b3b3b] rounded-full pl-[60px] text-gray-400 outline-none"
           type="text"
           placeholder="Search users"
