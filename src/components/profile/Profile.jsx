@@ -106,7 +106,7 @@ const Profile = () => {
     });
   };
 
-    // Fetch the list of users the logged-in user is following
+  // Fetch the list of users the logged-in user is following
   useEffect(() => {
     const followingRef = ref(db, `following/${data.uid}`);
     onValue(followingRef, (snapshot) => {
@@ -162,8 +162,12 @@ const Profile = () => {
             />
           </div>
           <div className="flex">
-            <p className="text-gray-500 text-base px-10">{followersCount} Followers</p>
-            <p className="text-gray-500 text-base px-10">{followingCount} Following</p>
+            <p className="text-gray-500 text-base px-10">
+              {followersCount} Followers
+            </p>
+            <p className="text-gray-500 text-base px-10">
+              {followingCount} Following
+            </p>
           </div>
           <p className="text-gray-500 text-base px-10">
             @{data?.username || "name"}
@@ -178,7 +182,7 @@ const Profile = () => {
             </div>
             <div className="flex gap-x-2 items-center">
               <FaLink size={24} />
-              <p className="text-[#1D9BF0]">{data?.link || "facebook.com"}</p>
+              <a className="text-[#1D9BF0]" href={data?.link || "#"}>{data?.link || "facebook.com"}</a>
             </div>
             <div className="flex gap-x-2 items-center">
               <PiBalloon size={24} />
