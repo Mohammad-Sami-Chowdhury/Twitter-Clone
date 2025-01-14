@@ -11,7 +11,7 @@ import {
 import firebaseConfig from "./components/firebase/firebase.config";
 import Home from "./page/home/Home";
 import Login from "./page/login/login";
-import Chat from "./page/chat/chat";
+import Chat from "./page/chat/Chat";
 import UserProfile from "./components/userProfile/UserProfile";
 
 const router = createBrowserRouter(
