@@ -3,6 +3,7 @@ import { CiSearch, CiSettings } from "react-icons/ci";
 import userProfile from "../../assets/profile-user.png";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, onValue, set, remove } from "firebase/database";
+import { Link } from "react-router-dom";
 
 const Rightbar = () => {
   const data = useSelector((state) => state.userDetails.userInfo);
@@ -94,14 +95,25 @@ const Rightbar = () => {
             className="flex justify-between items-center mb-2"
             key={item.userid}
           >
-            <div className="flex items-center gap-x-3">
+            {/* <div className="flex items-center gap-x-3">
               <img src={userProfile} alt="user-profile" />
               <div>
                 <p className="text-[18px] font-semibold text-white">
-                  {item.username}
+                  {item.displayName}
                 </p>
               </div>
-            </div>
+            </div> */}
+            <Link
+              to={`/profile/${item.userid}`}
+              className="flex items-center gap-x-3"
+            >
+              <img src={userProfile} alt="user-profile" />
+              <div>
+                <p className="text-[18px] font-semibold text-white">
+                  {item.displayName}
+                </p>
+              </div>
+            </Link>
             <button
               onClick={() => handleFollowToggle(item.userid)}
               className={`w-[92px] h-[38px] text-base font-bold rounded-full ${

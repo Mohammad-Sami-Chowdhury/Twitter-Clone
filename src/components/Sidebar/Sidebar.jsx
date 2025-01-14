@@ -30,10 +30,12 @@ const Sidebar = () => {
           <IoMdNotificationsOutline size={28} />
           <p className="text-[18px] font-pops font-semibold">Notificatios</p>
         </div>
+        <Link className="flex items-center gap-x-5" to="/chat">
         <div className="flex text-white items-center gap-x-5 cursor-pointer">
           <IoMailOutline size={28} />
           <p className="text-[18px] font-pops font-semibold">Messages</p>
         </div>
+        </Link>
         <div className="flex text-white items-center gap-x-5 cursor-pointer">
           <CiBookmark size={28} />
           <p className="text-[18px] font-pops font-semibold">Bookmarks</p>

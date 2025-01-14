@@ -11,6 +11,8 @@ import {
 import firebaseConfig from "./components/firebase/firebase.config";
 import Home from "./page/home/Home";
 import Login from "./page/login/login";
+import Chat from "./page/chat/chat";
+import UserProfile from "./components/userProfile/UserProfile";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +22,8 @@ const router = createBrowserRouter(
       <Route path="/registration" element={<Registration />}></Route>
       <Route path="/login" element={<Login />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
+      <Route path="/chat" element={<Chat />}></Route>
+      <Route path="/profile/:userid" element={<UserProfile />}></Route>
     </>
   )
 );

@@ -80,15 +80,25 @@ const Profile = () => {
     });
     setIsEditing(true);
   };
-
   const handleSaveProfile = () => {
     const userRef = ref(db, "users/" + data.uid);
     update(userRef, editDetails).then(() => {
       // Update Redux state
       dispatch(updateDisplayName(editDetails.displayName));
 
-      // Update localStorage
+      // Update Redux and userData
       const updatedUserInfo = { ...data, ...editDetails };
+
+      // Update Redux state
+      dispatch({
+        type: "user/updateUserInfo",
+        payload: updatedUserInfo,
+      });
+
+      // Update local state for immediate reactivity
+      setUserData(updatedUserInfo);
+
+      // Update localStorage
       localStorage.setItem("userLoginInfo", JSON.stringify(updatedUserInfo));
 
       // Now update the user's posts with the new name
@@ -106,7 +116,6 @@ const Profile = () => {
     });
   };
 
-  // Fetch the list of users the logged-in user is following
   useEffect(() => {
     const followingRef = ref(db, `following/${data.uid}`);
     onValue(followingRef, (snapshot) => {
@@ -151,9 +160,9 @@ const Profile = () => {
             />
           </div>
 
-          <div className="flex gap-x-1 items-center pt-[100px]">
-            <p className="text-2xl text-white font-bold px-10">
-              {data?.displayName || "Name"}
+          <div className="flex gap-x-4 items-center pt-[100px]">
+            <p className="text-2xl text-white font-bold pl-10">
+              {data?.displayName || "Add Name"}
             </p>
             <FaPencilAlt
               className="text-white cursor-pointer"
@@ -161,36 +170,48 @@ const Profile = () => {
               onClick={handleEditProfile}
             />
           </div>
-          <div className="flex">
-            <p className="text-gray-500 text-base px-10">
+          <div className="flex font-bold pl-10 gap-x-3">
+            <p className="text-gray-500 text-base">
               {followersCount} Followers
             </p>
-            <p className="text-gray-500 text-base px-10">
+            <p className="text-gray-500 text-base">
               {followingCount} Following
             </p>
           </div>
-          <p className="text-gray-500 text-base px-10">
-            @{data?.username || "name"}
+          <p
+            onClick={handleEditProfile}
+            className="text-gray-500 text-base px-10"
+          >
+            @{data?.username || "Add username"}
           </p>
-          <p className="text-white text-[18px] px-10">
-            {data?.bio || "Write your bio"}
+          <p
+            onClick={handleEditProfile}
+            className="text-gray-500 text-[18px] px-10"
+          >
+            {data?.bio || "Add bio"}
           </p>
           <div className="flex text-gray-500 text-[18px] justify-between items-center px-10">
             <div className="flex gap-x-2 items-center">
               <CiLocationOn size={24} />
-              <p>{data?.location || "Dhaka, Bangladesh"}</p>
+              <p onClick={handleEditProfile}>
+                {data?.location || "Add Location"}
+              </p>
             </div>
             <div className="flex gap-x-2 items-center">
               <FaLink size={24} />
-              <a className="text-[#1D9BF0]" href={data?.link || "#"}>{data?.link || "facebook.com"}</a>
+              <a
+                onClick={handleEditProfile}
+                className="text-[#1D9BF0]"
+                href={data?.link || "#"}
+              >
+                {data?.link || "facebook.com"}
+              </a>
             </div>
             <div className="flex gap-x-2 items-center">
               <PiBalloon size={24} />
-              <p>{data?.birthday || "5 January 2005"}</p>
-            </div>
-            <div className="flex gap-x-2 items-center">
-              <SlCalender size={24} />
-              <p>Joined 1 January 2025</p>
+              <p onClick={handleEditProfile}>
+                {data?.birthday || "Add Birthday"}
+              </p>
             </div>
           </div>
 
