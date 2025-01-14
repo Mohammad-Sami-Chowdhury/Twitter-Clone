@@ -26,8 +26,6 @@ import profilesm from "../../assets/profilesm.png";
 const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [userData, setUserData] = useState({});
-  console.log(userData);
-
   const [isEditing, setIsEditing] = useState(false);
   const [editDetails, setEditDetails] = useState({
     displayName: "",

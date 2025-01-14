@@ -19,7 +19,6 @@ const Home = () => {
   const [postText, setPostText] = useState("");
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  console.log(currentUser);
   
   const data = useSelector((state) => state.userDetails.userInfo);
 
