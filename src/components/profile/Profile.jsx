@@ -40,6 +40,9 @@ const Profile = () => {
   const dispatch = useDispatch();
   const db = getDatabase();
   const [menuTimestamp, setMenuTimestamp] = useState(null);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [following, setFollowing] = useState({});
 
   useEffect(() => {
     const postsRef = ref(db, "posts/");
@@ -102,6 +105,24 @@ const Profile = () => {
       setIsEditing(false);
     });
   };
+
+    // Fetch the list of users the logged-in user is following
+  useEffect(() => {
+    const followingRef = ref(db, `following/${data.uid}`);
+    onValue(followingRef, (snapshot) => {
+      let followingData = {};
+      snapshot.forEach((item) => {
+        followingData[item.key] = true;
+      });
+      setFollowing(followingData);
+      setFollowingCount(snapshot.size); // Set following count
+    });
+
+    const followersRef = ref(db, `followers/${data.uid}`);
+    onValue(followersRef, (snapshot) => {
+      setFollowersCount(snapshot.size); // Set followers count
+    });
+  }, [db, data.uid]);
   return (
     <div className="bg-[#1B2730] h-screen font-pops">
       <div className="flex">
@@ -139,6 +160,10 @@ const Profile = () => {
               size={16}
               onClick={handleEditProfile}
             />
+          </div>
+          <div className="flex">
+            <p className="text-gray-500 text-base px-10">{followersCount} Followers</p>
+            <p className="text-gray-500 text-base px-10">{followingCount} Following</p>
           </div>
           <p className="text-gray-500 text-base px-10">
             @{data?.username || "name"}

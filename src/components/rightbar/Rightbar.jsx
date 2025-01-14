@@ -90,7 +90,10 @@ const Rightbar = () => {
           You Might Like
         </p>
         {filteredUsers.map((item) => (
-          <div className="flex justify-between items-center mb-2" key={item.userid}>
+          <div
+            className="flex justify-between items-center mb-2"
+            key={item.userid}
+          >
             <div className="flex items-center gap-x-3">
               <img src={userProfile} alt="user-profile" />
               <div>
