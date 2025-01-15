@@ -95,14 +95,6 @@ const Rightbar = () => {
             className="flex justify-between items-center mb-2"
             key={item.userid}
           >
-            {/* <div className="flex items-center gap-x-3">
-              <img src={userProfile} alt="user-profile" />
-              <div>
-                <p className="text-[18px] font-semibold text-white">
-                  {item.displayName}
-                </p>
-              </div>
-            </div> */}
             <Link
               to={`/profile/${item.userid}`}
               className="flex items-center gap-x-3"

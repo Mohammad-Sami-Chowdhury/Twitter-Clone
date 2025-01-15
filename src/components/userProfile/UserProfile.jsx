@@ -11,6 +11,7 @@ const UserProfile = () => {
   const { userid } = useParams(); // Get the userid from the route
   const [userData, setUserData] = useState({});
   const [userPosts, setUserPosts] = useState([]);
+
   const db = getDatabase();
 
   useEffect(() => {
@@ -27,7 +28,8 @@ const UserProfile = () => {
     onValue(postsRef, (snapshot) => {
       const posts = [];
       snapshot.forEach((postItem) => {
-        if (postItem.val().uid === userid) { // Filter posts by the user’s uid
+        if (postItem.val().uid === userid) {
+          // Filter posts by the user’s uid
           posts.push({
             id: postItem.key,
             ...postItem.val(),
@@ -36,6 +38,29 @@ const UserProfile = () => {
       });
       posts.sort((a, b) => b.timestamp - a.timestamp); // Sort by timestamp
       setUserPosts(posts);
+    });
+    onValue(userRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setUserData(snapshot.val());
+      }
+    });
+
+    // Fetch followers count
+    const followersRef = ref(db, `followers/${userid}`);
+    onValue(followersRef, (snapshot) => {
+      setUserData((prevData) => ({
+        ...prevData,
+        followers: snapshot.size || 0, // snapshot.size gives the count
+      }));
+    });
+
+    // Fetch following count
+    const followingRef = ref(db, `following/${userid}`);
+    onValue(followingRef, (snapshot) => {
+      setUserData((prevData) => ({
+        ...prevData,
+        following: snapshot.size || 0,
+      }));
     });
   }, [db, userid]);
 
@@ -60,26 +85,48 @@ const UserProfile = () => {
               alt="profile"
             />
           </div>
-
           <div className="flex gap-x-4 items-center pt-[100px]">
             <p className="text-2xl text-white font-bold pl-10">
               {userData?.displayName || "Name"}
             </p>
           </div>
-          <p className="text-gray-500 text-base px-10">@{userData?.username || "name"}</p>
-          <p className="text-gray-500 text-[18px] px-10">{userData?.bio || "Write your bio"}</p>
+          <div className="flex font-bold pl-10 gap-x-3">
+            <p className="text-gray-500 text-base">
+              {userData.followers || 0} Followers
+            </p>
+            <p className="text-gray-500 text-base">
+              {userData.following || 0} Following
+            </p>
+          </div>
+          <p className="text-gray-500 text-base px-10">
+            @{userData?.username || "name"}
+          </p>
+          <p className="text-gray-500 text-[18px] px-10">
+            {userData?.bio || "Write your bio"}
+          </p>
 
           {/* Display user posts */}
           <div className="px-10 mt-[50px]">
-            <p className="text-white text-2xl font-bold mb-4">Posts by {userData?.displayName}</p>
+            <p className="text-white text-2xl font-bold mb-4">
+              Posts by {userData?.displayName}
+            </p>
             {userPosts.map((post) => (
-              <div key={post.id} className="bg-gray-800 text-white rounded-lg p-4 mb-4 space-y-2">
+              <div
+                key={post.id}
+                className="bg-gray-800 text-white rounded-lg p-4 mb-4 space-y-2"
+              >
                 <div className="flex gap-2 items-center">
-                  <img className="w-[40px]" src={profilesm} alt="profile-user" />
+                  <img
+                    className="w-[40px]"
+                    src={profilesm}
+                    alt="profile-user"
+                  />
                   <p className="font-bold text-2xl">{post.name}</p>
                 </div>
                 <p className="text-[20px]">{post.text}</p>
-                <small className="text-gray-400">{new Date(post.timestamp).toLocaleString()}</small>
+                <small className="text-gray-400">
+                  {new Date(post.timestamp).toLocaleString()}
+                </small>
               </div>
             ))}
           </div>

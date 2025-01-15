@@ -2,14 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB9xcB8bY1MZR0bGr8GK0X-KDX3OtbEhP0",
-  authDomain: "twitter-4b46d.firebaseapp.com",
-  databaseURL: "https://twitter-4b46d-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "twitter-4b46d",
-  storageBucket: "twitter-4b46d.firebasestorage.app",
-  messagingSenderId: "270618346046",
-  appId: "1:270618346046:web:972534ad95a533271cc76f",
-  measurementId: "G-8WH3QKPXEB",
+  apiKey: "AIzaSyD7W8R_T21VQuZ3q1HGXURmHnQDS4I5G-U",
+  authDomain: "hugababa-f7547.firebaseapp.com",
+  databaseURL: "https://hugababa-f7547-default-rtdb.firebaseio.com",
+  projectId: "hugababa-f7547",
+  storageBucket: "hugababa-f7547.appspot.com",
+  messagingSenderId: "323426329617",
+  appId: "1:323426329617:web:99989f0ed7c88ad8fc3db0",
+  measurementId: "G-QRK1282KEP",
 };
 
 // Initialize Firebase
