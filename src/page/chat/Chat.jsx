@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, onValue, push } from "firebase/database";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import profilesm from "../../assets/profilesm.png";
+import avatar from "../../assets/avatar.png";
 import { TbTriangleInvertedFilled } from "react-icons/tb";
 import { IoMdSend } from "react-icons/io";
 import { GrGallery } from "react-icons/gr";
@@ -111,7 +111,7 @@ const Chat = () => {
                 className="flex gap-x-4 items-center cursor-pointer mb-4"
                 onClick={() => setSelectedUser(user)}
               >
-                <img src={profilesm} alt="profile" />
+                <img className="w-[50px] h-[50px] object-cover rounded-full" src={user.profilePicture || avatar} alt="profile" />
                 <div>
                   <p className="text-base text-white font-bold">
                     {user.displayName || "Anonymous"}
@@ -127,7 +127,7 @@ const Chat = () => {
           {selectedUser ? (
             <>
               <div className="mx-5 mt-5 flex gap-x-5 items-center border-b-[1px] border-gray-500 pb-5 ">
-                <img src={profilesm} alt="profile" />
+                <img className="w-[50px] h-[50px] object-cover rounded-full" src={selectedUser.profilePicture || avatar} alt="profile" />
                 <div>
                   <p className="text-2xl text-white font-bold">
                     {selectedUser.displayName || "Anonymous"}

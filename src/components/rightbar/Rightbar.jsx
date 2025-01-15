@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CiSearch, CiSettings } from "react-icons/ci";
-import userProfile from "../../assets/profile-user.png";
+import avatar from "../../assets/avatar.png"
 import { useSelector } from "react-redux";
 import { getDatabase, ref, onValue, set, remove } from "firebase/database";
 import { Link } from "react-router-dom";
@@ -99,7 +99,7 @@ const Rightbar = () => {
               to={`/profile/${item.userid}`}
               className="flex items-center gap-x-3"
             >
-              <img src={userProfile} alt="user-profile" />
+              <img className="w-[50px] h-[50px] rounded-full object-cover" src={item.profilePicture || avatar} alt="user-profile" />
               <div>
                 <p className="text-[18px] font-semibold text-white">
                   {item.displayName}

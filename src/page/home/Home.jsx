@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Rightbar from "../../components/rightbar/Rightbar";
-import profilesm from "../../assets/profilesm.png";
+import avatar from "../../assets/avatar.png";
 import { CiImageOn, CiTimer } from "react-icons/ci";
 import { MdOutlineGifBox, MdOutlineEmojiEmotions } from "react-icons/md";
 import { FaChartBar } from "react-icons/fa6";
@@ -19,7 +19,8 @@ const Home = () => {
   const [postText, setPostText] = useState("");
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  
+  const [usersProfilePictures, setUsersProfilePictures] = useState({});
+
   const data = useSelector((state) => state.userDetails.userInfo);
 
   // Check for logged-in user and authentication status
@@ -58,10 +59,9 @@ const Home = () => {
       uid: currentUser?.uid,
       email: currentUser?.email,
       name: currentUser?.displayName,
-    })
-      .then(() => {
-        setPostText("");
-      })
+    }).then(() => {
+      setPostText("");
+    });
   };
 
   // Fetch posts of followed users
@@ -92,6 +92,17 @@ const Home = () => {
     });
   }, [db, currentUser?.uid]);
 
+  useEffect(() => {
+    const usersRef = ref(db, "users/");
+    onValue(usersRef, (snapshot) => {
+      const usersPictures = {};
+      snapshot.forEach((userSnapshot) => {
+        usersPictures[userSnapshot.key] = userSnapshot.val().profilePicture;
+      });
+      setUsersProfilePictures(usersPictures);
+    });
+  }, [db]);
+
   return (
     <section className="bg-[#1B2730] h-screen font-pops">
       {verify ? (
@@ -105,7 +116,11 @@ const Home = () => {
             </div>
             <div className="mt-5 px-[25px] border-b-[1px] border-gray-500 pb-7">
               <div className="flex gap-x-5">
-                <img src={profilesm} alt="profilesm" />
+                <img
+                  className="w-[100px] h-[90px] rounded-full object-cover"
+                  src={data.profilePicture || avatar}
+                  alt="profilesm"
+                />
                 <input
                   placeholder="What’s happening"
                   className="outline-none w-full bg-transparent placeholder:font-bold text-white text-[22px]"
@@ -138,8 +153,8 @@ const Home = () => {
                 >
                   <div className="flex gap-2 items-center">
                     <img
-                      className="w-[40px]"
-                      src={profilesm}
+                      className="w-[40px] h-[40px] rounded-full object-cover"
+                      src={usersProfilePictures[post.uid] || avatar}
                       alt="profile-user"
                     />
                     <p className="font-bold text-2xl">{post.name}</p>

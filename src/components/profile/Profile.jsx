@@ -14,14 +14,18 @@ import {
   ref,
   onValue,
   remove,
-  push,
   update,
 } from "firebase/database";
 import { useSelector, useDispatch } from "react-redux";
 import { updateDisplayName } from "../../slices/userSlice";
 import cover from "../../assets/cover.png";
-import profile from "../../assets/profile.png";
-import profilesm from "../../assets/profilesm.png";
+import avatar from "../../assets/avatar.png";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 
 const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
@@ -34,11 +38,14 @@ const Profile = () => {
     location: "",
     link: "",
     birthday: "",
+    profilePicture: "",
   });
+  const [uploading, setUploading] = useState(false);
 
   const data = useSelector((state) => state.userDetails.userInfo);
   const dispatch = useDispatch();
   const db = getDatabase();
+  const storage = getStorage();
   const [menuTimestamp, setMenuTimestamp] = useState(null);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
@@ -58,64 +65,6 @@ const Profile = () => {
     });
   }, [db, data.uid]);
 
-  const handleMenu = (timestamp) => {
-    setMenuTimestamp(menuTimestamp === timestamp ? null : timestamp);
-  };
-
-  const handleDeletePost = (postId) => {
-    const postRef = ref(db, "posts/" + postId);
-    remove(postRef).then(() => {
-      setUserPosts(userPosts.filter((post) => post.id !== postId));
-    });
-  };
-
-  const handleEditProfile = () => {
-    setEditDetails({
-      displayName: data.displayName || "",
-      username: data.username || "",
-      bio: data.bio || "Write your bio",
-      location: data.location || "Dhaka, Bangladesh",
-      link: data.link || "facebook.com",
-      birthday: data.birthday || "5 January 2005",
-    });
-    setIsEditing(true);
-  };
-  const handleSaveProfile = () => {
-    const userRef = ref(db, "users/" + data.uid);
-    update(userRef, editDetails).then(() => {
-      // Update Redux state
-      dispatch(updateDisplayName(editDetails.displayName));
-
-      // Update Redux and userData
-      const updatedUserInfo = { ...data, ...editDetails };
-
-      // Update Redux state
-      dispatch({
-        type: "user/updateUserInfo",
-        payload: updatedUserInfo,
-      });
-
-      // Update local state for immediate reactivity
-      setUserData(updatedUserInfo);
-
-      // Update localStorage
-      localStorage.setItem("userLoginInfo", JSON.stringify(updatedUserInfo));
-
-      // Now update the user's posts with the new name
-      const postsRef = ref(db, "posts/");
-      onValue(postsRef, (snapshot) => {
-        snapshot.forEach((post) => {
-          if (post.val().uid === data.uid) {
-            const postRef = ref(db, "posts/" + post.key);
-            update(postRef, { name: editDetails.displayName });
-          }
-        });
-      });
-
-      setIsEditing(false);
-    });
-  };
-
   useEffect(() => {
     const followingRef = ref(db, `following/${data.uid}`);
     onValue(followingRef, (snapshot) => {
@@ -132,6 +81,90 @@ const Profile = () => {
       setFollowersCount(snapshot.size); // Set followers count
     });
   }, [db, data.uid]);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userLoginInfo"));
+    if (storedData) {
+      dispatch({
+        type: "user/updateUserInfo",
+        payload: storedData,
+      });
+      setUserData(storedData);
+      setEditDetails({
+        displayName: storedData.displayName || "",
+        username: storedData.username || "",
+        bio: storedData.bio || "Write your bio",
+        location: storedData.location || "Dhaka, Bangladesh",
+        link: storedData.link || "facebook.com",
+        birthday: storedData.birthday || "5 January 2005",
+        profilePicture: storedData.profilePicture || avatar,
+      });
+    }
+  }, [dispatch]);
+
+  const handleMenu = (timestamp) => {
+    setMenuTimestamp(menuTimestamp === timestamp ? null : timestamp);
+  };
+
+  const handleDeletePost = (postId) => {
+    const postRef = ref(db, "posts/" + postId);
+    remove(postRef).then(() => {
+      setUserPosts(userPosts.filter((post) => post.id !== postId));
+    });
+  };
+
+  const handleEditProfile = () => {
+    setIsEditing(true);
+  };
+
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    const fileRef = storageRef(storage, `profilePictures/${data.uid}`);
+    await uploadBytes(fileRef, file);
+    const fileURL = await getDownloadURL(fileRef);
+
+    const userRef = ref(db, "users/" + data.uid);
+    update(userRef, { profilePicture: fileURL }).then(() => {
+      const updatedUserInfo = { ...data, profilePicture: fileURL };
+      dispatch({ type: "user/updateUserInfo", payload: updatedUserInfo });
+      localStorage.setItem("userLoginInfo", JSON.stringify(updatedUserInfo));
+      setEditDetails({ ...editDetails, profilePicture: fileURL });
+      setUploading(false);
+    }).catch((error) => {
+      console.error("Error updating profile picture:", error);
+      setUploading(false);
+    });
+  };
+
+  const handleSaveProfile = () => {
+    const userRef = ref(db, "users/" + data.uid);
+    update(userRef, editDetails).then(() => {
+      dispatch(updateDisplayName(editDetails.displayName));
+      const updatedUserInfo = { ...data, ...editDetails };
+      dispatch({
+        type: "user/updateUserInfo",
+        payload: updatedUserInfo,
+      });
+      setUserData(updatedUserInfo);
+      localStorage.setItem("userLoginInfo", JSON.stringify(updatedUserInfo));
+      const postsRef = ref(db, "posts/");
+      onValue(postsRef, (snapshot) => {
+        snapshot.forEach((post) => {
+          if (post.val().uid === data.uid) {
+            const postRef = ref(db, "posts/" + post.key);
+            update(postRef, { name: editDetails.displayName });
+          }
+        });
+      });
+
+      setIsEditing(false);
+    });
+  };
+
   return (
     <div className="bg-[#1B2730] h-screen font-pops">
       <div className="flex">
@@ -154,8 +187,8 @@ const Profile = () => {
           </div>
           <div>
             <img
-              className="absolute top-[35%] left-5 rounded-full border-4 border-[#1B2730]"
-              src={profile}
+              className="absolute top-[35%] h-[150px] object-cover w-[150px] bg-[#1B2730] left-5 rounded-full border-4 border-[#1B2730]"
+              src={editDetails.profilePicture || avatar}
               alt="profile"
             />
           </div>
@@ -226,8 +259,8 @@ const Profile = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex gap-2 items-center">
                       <img
-                        className="w-[40px]"
-                        src={profilesm}
+                        className="w-[40px] h-[40px] rounded-full object-cover"
+                        src={data.profilePicture || avatar}
                         alt="profile-user"
                       />
                       <p className="font-bold text-2xl">{data.displayName}</p>
@@ -272,6 +305,22 @@ const Profile = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white rounded-lg p-6 w-[500px] space-y-4">
             <h2 className="text-2xl font-bold">Edit Profile</h2>
+            <div className="flex items-center gap-4">
+              <img
+                src={editDetails.profilePicture || avatar}
+                alt="profile"
+                className="w-[80px] h-[80px] rounded-full"
+              />
+              <label className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded">
+                {uploading ? "Uploading..." : "Change Picture"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleProfilePictureChange}
+                />
+              </label>
+            </div>
             <input
               className="w-full p-2 border rounded"
               placeholder="Display Name"
@@ -320,18 +369,18 @@ const Profile = () => {
                 setEditDetails({ ...editDetails, link: e.target.value })
               }
             />
-            <div className="flex justify-end space-x-4">
+            <div className="flex gap-x-4">
               <button
-                className="px-4 py-2 bg-gray-400 text-white rounded"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
                 onClick={handleSaveProfile}
+                className="bg-blue-500 text-white px-6 py-2 rounded-lg"
               >
                 Save
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="bg-red-500 text-white px-6 py-2 rounded-lg"
+              >
+                Cancel
               </button>
             </div>
           </div>
