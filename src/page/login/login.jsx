@@ -20,7 +20,7 @@ const Login = () => {
   };
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, emailInput, passwordInput).then((user) => {
-      dispatch(userLoginInfo(user.user));
+      dispatch(userLoginInfo(user.user));     
       localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
       setTimeout(() => {
         navigate("/home");

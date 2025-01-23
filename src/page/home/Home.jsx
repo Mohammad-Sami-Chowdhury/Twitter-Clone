@@ -118,7 +118,7 @@ const Home = () => {
               <div className="flex gap-x-5">
                 <img
                   className="w-[100px] h-[90px] rounded-full object-cover"
-                  src={data.profilePicture || avatar}
+                  src={data.photoURL || avatar}
                   alt="profilesm"
                 />
                 <input

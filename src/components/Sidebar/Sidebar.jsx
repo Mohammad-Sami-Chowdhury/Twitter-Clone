@@ -60,7 +60,7 @@ const Sidebar = () => {
       </button>
       <Link to="/profile">
         <div className="flex items-center gap-x-3 mt-[100px] cursor-pointer">
-          <img className="w-[50px] h-[50px] rounded-full object-cover" src={data.profilePicture || avatar} alt="profile" />
+          <img className="w-[50px] h-[50px] rounded-full object-cover" src={data.photoURL || avatar} alt="profile" />
           <div>
             <p className="font-pops text-base text-white font-semibold">
               {data.displayName}
