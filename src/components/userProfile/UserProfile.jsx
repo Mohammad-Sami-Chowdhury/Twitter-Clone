@@ -4,8 +4,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import Sidebar from "../Sidebar/Sidebar";
 import Rightbar from "../rightbar/Rightbar";
 import cover from "../../assets/cover.png";
-import profile from "../../assets/profile.png";
-import profilesm from "../../assets/profilesm.png";
+import avatar from "../../assets/avatar.png"
 
 const UserProfile = () => {
   const { userid } = useParams(); // Get the userid from the route
@@ -41,7 +40,7 @@ const UserProfile = () => {
     });
     onValue(userRef, (snapshot) => {
       if (snapshot.exists()) {
-        setUserData(snapshot.val());
+        setUserData(snapshot.val());       
       }
     });
 
@@ -80,8 +79,8 @@ const UserProfile = () => {
           </div>
           <div>
             <img
-              className="absolute top-[35%] left-5 rounded-full border-4 border-[#1B2730]"
-              src={profile}
+              className="absolute top-[35%] left-5 rounded-full border-4 border-[#1B2730] h-[150px] w-[150px] object-cover"
+              src={userData.profilePicture || avatar}
               alt="profile"
             />
           </div>
@@ -118,7 +117,7 @@ const UserProfile = () => {
                 <div className="flex gap-2 items-center">
                   <img
                     className="w-[40px]"
-                    src={profilesm}
+                    src={avatar}
                     alt="profile-user"
                   />
                   <p className="font-bold text-2xl">{post.name}</p>

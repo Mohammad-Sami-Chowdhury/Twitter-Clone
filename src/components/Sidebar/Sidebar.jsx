@@ -31,18 +31,20 @@ const Sidebar = () => {
           <p className="text-[18px] font-pops font-semibold">Notificatios</p>
         </div>
         <Link className="flex items-center gap-x-5" to="/chat">
-        <div className="flex text-white items-center gap-x-5 cursor-pointer">
-          <IoMailOutline size={28} />
-          <p className="text-[18px] font-pops font-semibold">Messages</p>
-        </div>
+          <div className="flex text-white items-center gap-x-5 cursor-pointer">
+            <IoMailOutline size={28} />
+            <p className="text-[18px] font-pops font-semibold">Messages</p>
+          </div>
         </Link>
         <div className="flex text-white items-center gap-x-5 cursor-pointer">
           <CiBookmark size={28} />
           <p className="text-[18px] font-pops font-semibold">Bookmarks</p>
         </div>
         <div className="flex text-white items-center gap-x-5 cursor-pointer">
-          <LuNotebookText size={28} />
-          <p className="text-[18px] font-pops font-semibold">Lists</p>
+          <Link className="flex items-center gap-x-5" to="/lists">
+            <LuNotebookText size={28} />
+            <p className="text-[18px] font-pops font-semibold">Lists</p>
+          </Link>
         </div>
         <div className="flex text-white items-center gap-x-5">
           <Link className="flex items-center gap-x-5" to="/profile">
@@ -60,7 +62,11 @@ const Sidebar = () => {
       </button>
       <Link to="/profile">
         <div className="flex items-center gap-x-3 mt-[100px] cursor-pointer">
-          <img className="w-[50px] h-[50px] rounded-full object-cover" src={data.photoURL || avatar} alt="profile" />
+          <img
+            className="w-[50px] h-[50px] rounded-full object-cover"
+            src={data.photoURL || avatar}
+            alt="profile"
+          />
           <div>
             <p className="font-pops text-base text-white font-semibold">
               {data.displayName}

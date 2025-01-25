@@ -56,9 +56,9 @@ const Rightbar = () => {
 
   // Filter users based on search query
   const filteredUsers = userList.filter(
-    (user) =>
+    (user) =>      
       !blockedByUsers[user.userid] &&
-      user.username.toLowerCase().includes(searchQuery.toLowerCase())
+      user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

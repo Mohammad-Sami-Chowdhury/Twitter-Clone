@@ -13,6 +13,7 @@ import Home from "./page/home/Home";
 import Login from "./page/login/login";
 import Chat from "./page/chat/Chat";
 import UserProfile from "./components/userProfile/UserProfile";
+import Lists from "./page/chat/lists/Lists";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/chat" element={<Chat />}></Route>
+      <Route path="/lists" element={<Lists />}></Route>
       <Route path="/profile/:userid" element={<UserProfile />}></Route>
     </>
   )
