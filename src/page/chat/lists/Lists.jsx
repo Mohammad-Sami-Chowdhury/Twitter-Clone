@@ -5,6 +5,7 @@ import avatar from "../../../assets/avatar.png";
 import { getDatabase, onValue, ref, remove, set } from "firebase/database";
 import { useSelector } from "react-redux";
 import { CiSearch } from "react-icons/ci";
+import { Link, useParams } from "react-router-dom";
 
 const lists = () => {
   const data = useSelector((state) => state.userDetails.userInfo);
@@ -60,6 +61,37 @@ const lists = () => {
       !blockedByUsers[user.userid] &&
       user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    const usersRef = ref(db, "users/");
+    onValue(usersRef, (snapshot) => {
+      let arr = [];
+      snapshot.forEach((item) => {
+        if (data.uid !== item.key) {
+          const userId = item.key;
+          // Fetch followers count for each user
+          const followersRef = ref(db, `followers/${userId}`);
+          onValue(followersRef, (followersSnapshot) => {
+            const followersCount = followersSnapshot.size || 0;
+            // Fetch following count for each user
+            const followingRef = ref(db, `following/${userId}`);
+            onValue(followingRef, (followingSnapshot) => {
+              const followingCount = followingSnapshot.size || 0;
+
+              arr.push({
+                ...item.val(),
+                followers: followersCount,
+                following: followingCount,
+                userid: userId,
+              });
+            });
+          });
+        }
+      });
+      setUserList(arr);
+    });
+  }, [db, data.uid]);
+
   return (
     <div className="bg-[#1B2730] h-screen font-pops">
       <div className="flex">
@@ -93,10 +125,20 @@ const lists = () => {
                   src={item.profilePicture || avatar}
                   alt="avatar"
                 />
-                <p className="text-[20px] text-white font-bold mt-[25%] text-center">
-                  {item.displayName}
-                </p>
-                <div className="flex justify-center gap-x-[50px] mt-[40px]">
+                <Link to={`/profile/${item.userid}`}>
+                  <p className="text-[20px] text-white font-bold mt-[25%] text-center">
+                    {item.displayName}
+                  </p>
+                </Link>
+                <div className="flex font-bold pl-10 gap-x-3">
+                  <p className="text-gray-500 text-base">
+                    {item.followers || 0} Followers
+                  </p>
+                  <p className="text-gray-500 text-base">
+                    {item.following || 0} Following
+                  </p>
+                </div>
+                <div className="flex justify-center gap-x-[50px] mt-[20px]">
                   <button className="w-[100px] bg-red-500 text-white font-bold h-[38px] rounded-full">
                     Block
                   </button>
