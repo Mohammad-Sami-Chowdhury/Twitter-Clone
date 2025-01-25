@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CiSearch, CiSettings } from "react-icons/ci";
-import avatar from "../../assets/avatar.png"
+import avatar from "../../assets/avatar.png";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, onValue, set, remove } from "firebase/database";
 import { Link } from "react-router-dom";
@@ -11,14 +11,15 @@ const Rightbar = () => {
   const [userList, setUserList] = useState([]);
   const [following, setFollowing] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [blockedUsers, setBlockedUsers] = useState({});
   const [blockedByUsers, setBlockedByUsers] = useState({});
 
-  // Fetch users from the database
+  // Fetch all users from the database
   useEffect(() => {
     const usersRef = ref(db, "users/");
     onValue(usersRef, (snapshot) => {
       let arr = [];
-      snapshot.forEach((item) => { 
+      snapshot.forEach((item) => {
         if (data.uid !== item.key) {
           arr.push({ ...item.val(), userid: item.key });
         }
@@ -39,6 +40,30 @@ const Rightbar = () => {
     });
   }, [db, data.uid]);
 
+  // Fetch blocked users
+  useEffect(() => {
+    const blockedRef = ref(db, `blocked/${data.uid}`);
+    onValue(blockedRef, (snapshot) => {
+      let blockedData = {};
+      snapshot.forEach((item) => {
+        blockedData[item.key] = true;
+      });
+      setBlockedUsers(blockedData);
+    });
+  }, [db, data.uid]);
+
+  // Fetch users who blocked the logged-in user
+  useEffect(() => {
+    const blockedByRef = ref(db, `blockedBy/${data.uid}`);
+    onValue(blockedByRef, (snapshot) => {
+      let blockedByData = {};
+      snapshot.forEach((item) => {
+        blockedByData[item.key] = true;
+      });
+      setBlockedByUsers(blockedByData);
+    });
+  }, [db, data.uid]);
+
   // Follow/Unfollow functionality
   const handleFollowToggle = (followedUserId) => {
     const currentUserId = data.uid;
@@ -54,10 +79,11 @@ const Rightbar = () => {
     }
   };
 
-  // Filter users based on search query
+  // Filter users based on search query and block status
   const filteredUsers = userList.filter(
-    (user) =>      
-      !blockedByUsers[user.userid] &&
+    (user) =>
+      !blockedUsers[user.userid] && // Exclude blocked users
+      !blockedByUsers[user.userid] && // Exclude users who blocked you
       user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -99,7 +125,11 @@ const Rightbar = () => {
               to={`/profile/${item.userid}`}
               className="flex items-center gap-x-3"
             >
-              <img className="w-[50px] h-[50px] rounded-full object-cover" src={item.profilePicture || avatar} alt="user-profile" />
+              <img
+                className="w-[50px] h-[50px] rounded-full object-cover"
+                src={item.profilePicture || avatar}
+                alt="user-profile"
+              />
               <div>
                 <p className="text-[18px] font-semibold text-white">
                   {item.displayName}
