@@ -18,7 +18,7 @@ const Rightbar = () => {
     const usersRef = ref(db, "users/");
     onValue(usersRef, (snapshot) => {
       let arr = [];
-      snapshot.forEach((item) => {
+      snapshot.forEach((item) => { 
         if (data.uid !== item.key) {
           arr.push({ ...item.val(), userid: item.key });
         }
