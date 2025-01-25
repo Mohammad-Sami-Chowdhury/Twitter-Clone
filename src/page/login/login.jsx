@@ -31,7 +31,7 @@ const Login = () => {
     <div className="bg-[#1B2730] h-screen py-10">
       <img className="w-[100px] mx-auto" src={logo} alt="logo" />
       <h1 className="font-pops font-bold text-[42px] text-white text-center my-9 ">
-        Log in to Twitter
+        Log in to Handbook
       </h1>
       <div className="flex justify-center mb-[25px]">
         <input
@@ -67,7 +67,7 @@ const Login = () => {
           to="/registration"
           className="text-[#1D9BF0] text-[18px] font-pops"
         >
-          Sign up to Twitter
+          Sign up to Handbook
         </Link>
       </div>
     </div>

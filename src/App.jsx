@@ -13,7 +13,7 @@ import Home from "./page/home/Home";
 import Login from "./page/login/login";
 import Chat from "./page/chat/Chat";
 import UserProfile from "./components/userProfile/UserProfile";
-import Lists from "./page/chat/lists/Lists";
+import Lists from "./page/lists/lists";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

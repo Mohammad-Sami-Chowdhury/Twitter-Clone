@@ -15,6 +15,7 @@ import { GrGallery } from "react-icons/gr";
 import { TiAttachment } from "react-icons/ti";
 import { MdEmojiEmotions } from "react-icons/md";
 import EmojiPicker from "emoji-picker-react";
+import moment from "moment";
 
 const Chat = () => {
   const auth = getAuth();
@@ -289,7 +290,7 @@ const Chat = () => {
 
         {/* Popup for group creation */}
         {showPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[99999]">
             <div className="bg-white w-[400px] rounded-lg p-5">
               <h2 className="text-xl font-bold mb-4">Create Group</h2>
 
@@ -377,54 +378,81 @@ const Chat = () => {
               <div className="mx-5 mt-5 flex gap-x-5 items-center border-b-[1px] border-gray-500 pb-5 ">
                 <img
                   className="w-[50px] h-[50px] object-cover rounded-full"
-                  src={selectedEntity.groupImage || selectedEntity.profilePicture || avatar}
+                  src={
+                    selectedEntity.groupImage ||
+                    avatar
+                  }
                   alt="profile"
                 />
                 <div>
                   <p className="text-2xl text-white font-bold">
-                    {selectedEntity.groupName || selectedEntity.displayName || "Anonymous"}
+                    {selectedEntity.groupName ||
+                      selectedEntity.displayName ||
+                      "Anonymous"}
                   </p>
                   <p className="text-gray-500 text-base">Last Seen</p>
                 </div>
               </div>
               <div className="space-y-5 h-[700px] overflow-y-scroll overflow-x-hidden hide-scrollbar px-5">
-                {messages.map((message, index) => (
-                  <div key={index}>
-                    {message.imageUrl ? (
-                      <div
-                        className={`${
-                          message.sender === currentUser.uid
-                            ? "ml-auto"
-                            : "mr-auto"
-                        } max-w-[500px]`}
-                      >
-                        <img
-                          src={message.imageUrl}
-                          alt="Sent"
-                          className="rounded-lg max-w-full"
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        className={`${
-                          message.sender === currentUser.uid
-                            ? "bg-[#1D9BF0] ml-auto"
-                            : "bg-[#3b3b3b] mr-auto"
-                        } max-w-[500px] text-white font-medium p-[10px] rounded-lg relative`}
-                      >
-                        <TbTriangleInvertedFilled
-                          size={24}
-                          className={`absolute top-[-3px] ${
+                {messages.map((message, index) => {
+                  const timeAgo = moment(message.timestamp).fromNow();
+                  const isMoreThan5Minutes =
+                    moment().diff(moment(message.timestamp), "minutes") > 5;
+
+                  return (
+                    <div key={index}>
+                      {message.imageUrl ? (
+                        <div
+                          className={`${
                             message.sender === currentUser.uid
-                              ? "right-[-10px] text-[#1D9BF0]"
-                              : "left-[-10px] text-[#3b3b3b]"
-                          }`}
-                        />
-                        <p className="text-justify text-base">{message.text}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                              ? "ml-auto"
+                              : "mr-auto"
+                          } max-w-[500px]`}
+                        >
+                          <img
+                            src={message.imageUrl}
+                            alt="Sent"
+                            className="rounded-lg max-w-full"
+                          />
+                          <p className="text-gray-400 text-xs text-right">
+                            {isMoreThan5Minutes
+                              ? moment(message.timestamp).format(
+                                  "MMM Do YYYY, h:mm a"
+                                )
+                              : timeAgo}
+                          </p>
+                        </div>
+                      ) : (
+                        <div
+                          className={`${
+                            message.sender === currentUser.uid
+                              ? "bg-[#1D9BF0] ml-auto"
+                              : "bg-[#3b3b3b] mr-auto"
+                          } max-w-[500px] text-white font-medium p-[10px] rounded-lg relative`}
+                        >
+                          <TbTriangleInvertedFilled
+                            size={24}
+                            className={`absolute top-[-3px] ${
+                              message.sender === currentUser.uid
+                                ? "right-[-10px] text-[#1D9BF0]"
+                                : "left-[-10px] text-[#3b3b3b]"
+                            }`}
+                          />
+                          <p className="text-justify text-base">
+                            {message.text}
+                          </p>
+                          <p className="text-white text-xs text-right">
+                            {isMoreThan5Minutes
+                              ? moment(message.timestamp).format(
+                                  "MMM Do YYYY, h:mm a"
+                                )
+                              : timeAgo}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <div className="px-10 border-t-[1px] border-gray-500 pt-5 relative">
                 <input

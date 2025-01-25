@@ -97,7 +97,7 @@ const Registration = () => {
           <img className="w-[100px] mb-[55px]" src={logo} alt="logo" />
           <h1 className="text-[84px] font-bold text-white">Happening now</h1>
           <h2 className="text-[42px] font-bold text-white mb-[30px]">
-            Join Twitter today
+            Join Handbook today
           </h2>
           <div className="text-[20px] font-medium text-white space-y-5">
             <div className="flex cursor-pointer items-center gap-x-2 justify-center border-[1px] border-gray-500 w-[400px] h-[60px] rounded-full">
@@ -180,7 +180,7 @@ const Registration = () => {
             <Link>Marketing</Link>
           </li>
           <li>
-            <Link>Twitter for Business</Link>
+            <Link>Handbook for Business</Link>
           </li>
           <li>
             <Link>Developers</Link>
@@ -192,7 +192,7 @@ const Registration = () => {
             <Link>Settings</Link>
           </li>
           <li>
-            <Link>© 2024 Twitter, Inc.</Link>
+            <Link>© 2024 Handbook, Inc.</Link>
           </li>
         </ul>
       </div>
