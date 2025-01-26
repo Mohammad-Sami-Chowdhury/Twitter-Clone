@@ -290,15 +290,15 @@ const Chat = () => {
 
         {/* Popup for group creation */}
         {showPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[99999]">
-            <div className="bg-white w-[400px] rounded-lg p-5">
+          <div className="fixed inset-0 text-white bg-black bg-opacity-50 flex justify-center items-center z-[99999]">
+            <div className="bg-[#1B2730] w-[400px] rounded-lg p-5">
               <h2 className="text-xl font-bold mb-4">Create Group</h2>
 
               {/* Group Name Input */}
               <div className="mb-4">
                 <input
                   type="text"
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border border-gray-500 text-gray-500 rounded outline-none bg-transparent"
                   placeholder="Enter group name"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)} // Update the group name state
@@ -499,7 +499,7 @@ const Chat = () => {
               </div>
             </>
           ) : (
-            <div className="text-center text-white mt-10">
+            <div className="text-center text-white mt-10 text-3xl font-bold">
               <p>Select a user or group to start chatting</p>
             </div>
           )}

@@ -297,6 +297,16 @@ const Profile = () => {
                     />
                   </div>
                   <p className="text-[20px]">{post.text}</p>
+                  {/* Check if post has an image and display it */}
+                  {post.imageUrl && (
+                    <div className="mt-3">
+                      <img
+                        src={post.imageUrl}
+                        alt="Post Image"
+                        className="w-[300px] object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
                   <small className="text-gray-400">
                     {new Date(post.timestamp).toLocaleString()}
                   </small>

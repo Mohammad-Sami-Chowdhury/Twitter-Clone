@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, push, set, onValue } from "firebase/database";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -20,6 +26,9 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [usersProfilePictures, setUsersProfilePictures] = useState({});
+  const [imageFile, setImageFile] = useState(null); // State to handle image file
+  const [imagePreview, setImagePreview] = useState(null); // State to show image preview
+  const [showModal, setShowModal] = useState(false); // State to control the modal visibility
 
   const data = useSelector((state) => state.userDetails.userInfo);
 
@@ -44,24 +53,74 @@ const Home = () => {
     });
   }, [auth, navigate]);
 
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); // Preview the selected image
+    }
+  };
+
   // Function to handle tweet submission
   const handleTweet = () => {
-    if (postText.trim() === "") {
+    if (postText.trim() === "" && !imageFile) {
       toast.error("Post cannot be empty!");
       return;
     }
 
     const postsRef = ref(db, "posts");
     const newPostRef = push(postsRef);
-    set(newPostRef, {
-      text: postText,
-      timestamp: Date.now(),
-      uid: currentUser?.uid,
-      email: currentUser?.email,
-      name: currentUser?.displayName,
-    }).then(() => {
-      setPostText("");
-    });
+
+    // If there's an image, upload it to Firebase Storage
+    if (imageFile) {
+      const storage = getStorage();
+      const imageRef = storageRef(
+        storage,
+        `postImages/${Date.now()}_${imageFile.name}`
+      );
+      const uploadTask = uploadBytesResumable(imageRef, imageFile);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Handle progress (optional)
+        },
+        (error) => {
+          toast.error("Error uploading image");
+          console.error(error);
+        },
+        () => {
+          // Once the upload is complete, get the image URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            // Save the post along with the image URL
+            set(newPostRef, {
+              text: postText,
+              imageUrl: downloadURL, // Store the image URL
+              timestamp: Date.now(),
+              uid: currentUser?.uid,
+              email: currentUser?.email,
+              name: currentUser?.displayName,
+            }).then(() => {
+              setPostText("");
+              setImageFile(null); // Clear the image state after posting
+              setImagePreview(null); // Clear image preview after posting
+            });
+          });
+        }
+      );
+    } else {
+      // If no image, just save the text post
+      set(newPostRef, {
+        text: postText,
+        timestamp: Date.now(),
+        uid: currentUser?.uid,
+        email: currentUser?.email,
+        name: currentUser?.displayName,
+      }).then(() => {
+        setPostText("");
+      });
+    }
   };
 
   // Fetch posts of followed users
@@ -129,9 +188,28 @@ const Home = () => {
                   onChange={(e) => setPostText(e.target.value)}
                 />
               </div>
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="mt-4">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-[300px] object-cover rounded-lg"
+                  />
+                </div>
+              )}
               <div className="flex justify-between items-center mt-6">
                 <div className="text-2xl flex text-[#1D9BF0] gap-x-5">
-                  <CiImageOn />
+                  <div className="relative">
+                    <CiImageOn className="cursor-pointer" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="absolute top-[4px] left-[4px] w-4 h-4 opacity-0 cursor-pointer"
+                      id="image-upload"
+                    />
+                  </div>
                   <MdOutlineGifBox />
                   <MdOutlineEmojiEmotions />
                   <FaChartBar />
@@ -141,7 +219,7 @@ const Home = () => {
                   onClick={handleTweet}
                   className="w-[110px] h-[50px] rounded-full bg-[#1D9BF0] text-white font-bold text-base"
                 >
-                  Tweet
+                  Post
                 </button>
               </div>
             </div>
@@ -160,6 +238,13 @@ const Home = () => {
                     <p className="font-bold text-2xl">{post.name}</p>
                   </div>
                   <p className="text-[20px]">{post.text}</p>
+                  {post.imageUrl && (
+                    <img
+                      src={post.imageUrl}
+                      alt="Post Image"
+                      className="w-[300px] object-cover rounded-lg mt-4"
+                    />
+                  )}
                   <small className="text-gray-400">
                     {new Date(post.timestamp).toLocaleString()}
                   </small>
