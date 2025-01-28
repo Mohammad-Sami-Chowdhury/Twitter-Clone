@@ -393,7 +393,7 @@ const Chat = () => {
                   <p className="text-gray-500 text-base">Last Seen</p>
                 </div>
               </div>
-              <div className="space-y-5 h-[700px] overflow-y-scroll overflow-x-hidden hide-scrollbar px-5">
+              <div className="space-y-5 h-[700px] overflow-y-scroll overflow-x-hidden hide-scrollbar px-5  bg-[url('/src/assets/bg2.jpg')]  object-cover">
                 {messages.map((message, index) => {
                   const timeAgo = moment(message.timestamp).fromNow();
                   const isMoreThan5Minutes =
